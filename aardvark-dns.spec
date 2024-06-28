@@ -7,13 +7,14 @@
 #
 Name     : aardvark-dns
 Version  : 1.11.0
-Release  : 1
+Release  : 3
 URL      : https://github.com/containers/aardvark-dns/archive/refs/tags/v1.11.0.tar.gz
 Source0  : https://github.com/containers/aardvark-dns/archive/refs/tags/v1.11.0.tar.gz
 Source1  : https://github.com/containers/aardvark-dns/releases/download/v1.11.0/aardvark-dns-v1.11.0-vendor.tar.gz
 Summary  : Authoritative DNS server for A/AAAA container records
 Group    : Development/Tools
 License  : Apache-2.0 MIT Unicode-DFS-2016 Zlib
+Requires: aardvark-dns-libexec = %{version}-%{release}
 Requires: aardvark-dns-license = %{version}-%{release}
 BuildRequires : rustc
 # Suppress stripping binaries
@@ -24,6 +25,15 @@ BuildRequires : rustc
 # aardvark-dns
 Aardvark-dns is an authoritative dns server for `A/AAAA` container records. It can forward other requests
 to configured resolvers.
+
+%package libexec
+Summary: libexec components for the aardvark-dns package.
+Group: Default
+Requires: aardvark-dns-license = %{version}-%{release}
+
+%description libexec
+libexec components for the aardvark-dns package.
+
 
 %package license
 Summary: license components for the aardvark-dns package.
@@ -55,7 +65,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1719606549
+export SOURCE_DATE_EPOCH=1719610017
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -89,8 +99,11 @@ FFLAGS="$CLEAR_INTERMEDIATE_FFLAGS"
 FCFLAGS="$CLEAR_INTERMEDIATE_FCFLAGS"
 ASFLAGS="$CLEAR_INTERMEDIATE_ASFLAGS"
 LDFLAGS="$CLEAR_INTERMEDIATE_LDFLAGS"
-export SOURCE_DATE_EPOCH=1719606549
+export SOURCE_DATE_EPOCH=1719610017
 rm -rf %{buildroot}
+## install_prepend content
+export PREFIX=/usr
+## install_prepend end
 mkdir -p %{buildroot}/usr/share/package-licenses/aardvark-dns
 cp %{_builddir}/aardvark-dns-%{version}/LICENSE %{buildroot}/usr/share/package-licenses/aardvark-dns/7df059597099bb7dcf25d2a9aedfaf4465f72d8d || :
 cp %{_builddir}/vendor/anstream/LICENSE-APACHE %{buildroot}/usr/share/package-licenses/aardvark-dns/669a1e53b9dd9df3474300d3d959bb85bad75945 || :
@@ -281,6 +294,10 @@ GOAMD64=v2
 
 %files
 %defattr(-,root,root,-)
+
+%files libexec
+%defattr(-,root,root,-)
+/usr/libexec/podman/aardvark-dns
 
 %files license
 %defattr(0644,root,root,0755)
